@@ -48,7 +48,7 @@ def bfs(maze):
             continue
         visited.add((cur_row, cur_col))
         if maze.isObjective(cur_row, cur_col):
-            return cur_path, len(cur_path)
+            return cur_path, len(visited)
         for item in maze.getNeighbors(cur_row, cur_col):
             if item not in visited:
                 queue.append(cur_path + [item])
@@ -68,7 +68,7 @@ def dfs(maze):
             continue
         visited.add((cur_row, cur_col))
         if maze.isObjective(cur_row, cur_col):
-            return cur_path, len(cur_path)
+            return cur_path, len(visited)
         for item in maze.getNeighbors(cur_row, cur_col):
             if item not in visited:
                 stack.append(cur_path + [item])
@@ -92,7 +92,7 @@ def greedy(maze):
             continue
         visited.add((cur_row, cur_col))
         if maze.isObjective(cur_row, cur_col):
-            return cur_path, len(cur_path)
+            return cur_path, len(visited)
         for item in maze.getNeighbors(cur_row, cur_col):
             if item not in visited:
                 cost = abs(item[0] - result_row) + abs(item[1] - result_col)
@@ -121,7 +121,7 @@ def greedy(maze):
 #             abs(cur_col - result_col) + len(cur_path) - 1
 #         visited[(cur_row, cur_col)] = cur_cost
 #         if maze.isObjective(cur_row, cur_col):
-#             return cur_path, len(cur_path)
+#             return cur_path, len(visited)
 #         for item in maze.getNeighbors(cur_row, cur_col):
 #             new_cost = abs(item[0] - result_row) + \
 #                 abs(item[1] - result_col) + len(cur_path) - 1
@@ -134,7 +134,7 @@ def greedy(maze):
 #                     pq.put((new_cost, cur_path + [item]))
 #     return [], 0
 
-#====================================== PART 2 ===============================================
+# ====================================== PART 2 ===============================================
 # astar for part 2
 def update_pq(objectives, start):
     ret = queue.PriorityQueue()
@@ -143,11 +143,13 @@ def update_pq(objectives, start):
         ret.put((cost, item))
     return ret
 
+
 def astar(maze):
     # TODO: Write your code here
     # return path, num_states_explored
     cur_pq = queue.PriorityQueue()
     visited = {}
+    num_states_visited = set()
     objectives = maze.getObjectives()
     objectives_pq = update_pq(objectives, maze.getStart())
     cur_cost, cur_goal = objectives_pq.get()
@@ -159,12 +161,14 @@ def astar(maze):
         cur_row, cur_col = cur_path[-1]
         if (cur_row, cur_col) in visited:
             continue
-        cur_cost = abs(cur_row - cur_goal[0]) + abs(cur_col - cur_goal[1]) + len(cur_path) - 1
+        cur_cost = abs(cur_row - cur_goal[0]) + \
+            abs(cur_col - cur_goal[1]) + len(cur_path) - 1
         visited[(cur_row, cur_col)] = cur_cost
+        num_states_visited.add((cur_row, cur_col))
         if (cur_row, cur_col) in objectives:
             objectives.remove((cur_row, cur_col))
             if len(objectives) == 0:
-                return cur_path, len(cur_path)
+                return cur_path, len(num_states_visited)
             else:
                 objectives_pq = update_pq(objectives, (cur_row, cur_col))
                 cur_cost, cur_goal = objectives_pq.get()
@@ -172,9 +176,10 @@ def astar(maze):
                 cur_pq.put((cur_cost, cur_path))
                 visited.clear()
                 continue
-            
+
         for item in maze.getNeighbors(cur_row, cur_col):
-            new_cost = abs(item[0] - cur_goal[0]) + abs(item[1] - cur_goal[1]) + len(cur_path) - 1
+            new_cost = abs(item[0] - cur_goal[0]) + \
+                abs(item[1] - cur_goal[1]) + len(cur_path) - 1
             if item not in visited:
                 cur_pq.put((new_cost, cur_path + [item]))
             else:
