@@ -131,24 +131,6 @@ def greedy(maze):
 # ====================================== PART 2 ===============================================
 # astar for part 1&2
 # self-built data structure
-
-
-class ctor:
-    def __init__(self, row, col, cost, tcost):
-        self.row = row
-        self.col = col
-        self.position = (row, col)
-        self.cost = cost  # heuristic
-        self.tcost = tcost  # f = g + h（total）
-        self.prev = None
-        self.not_visited = []
-        self.level = 0
-
-    def __lt__(self, other):
-        return self.tcost < other.tcost
-
-
-
 class ctor:
     def __init__(self, row, col, cost, tcost):
         self.row = row
