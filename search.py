@@ -76,6 +76,31 @@ def dfs(maze):
     return [], 0
 
 
+# def greedy(maze):
+#     # TODO: Write your code here
+#     # return path, num_states_explored
+#     pq = queue.PriorityQueue()
+#     visited = set()
+#     result_row, result_col = maze.getObjectives()[0]
+#     start_row, start_col = maze.getStart()
+#     # pq item - tuple: (distance, path list)
+#     cost = abs(start_row-result_row) + abs(start_col - result_col)
+#     pq.put((cost, [maze.getStart()]))
+#     while not pq.empty():
+#         cur_path = pq.get()[1]
+#         cur_row, cur_col = cur_path[-1]
+#         if (cur_row, cur_col) in visited:
+#             continue
+#         visited.add((cur_row, cur_col))
+#         if maze.isObjective(cur_row, cur_col):
+#             return cur_path, len(visited)
+#         for item in maze.getNeighbors(cur_row, cur_col):
+#             if item not in visited:
+#                 cost = abs(item[0] - result_row) + abs(item[1] - result_col)
+#                 pq.put((cost, cur_path + [item]))
+#     return [], 0
+
+
 def greedy(maze):
     # TODO: Write your code here
     # return path, num_states_explored
@@ -89,13 +114,16 @@ def greedy(maze):
     while not pq.empty():
         cur_path = pq.get()[1]
         cur_row, cur_col = cur_path[-1]
-        if (cur_row, cur_col) in visited:
-            continue
-        visited.add((cur_row, cur_col))
-        if maze.isObjective(cur_row, cur_col):
-            return cur_path, len(visited)
+
         for item in maze.getNeighbors(cur_row, cur_col):
+            item_row, item_col = item[0],item[1]
+            if maze.isObjective(item_row, item_col):
+                visited.add(item)
+                cur_path += [item]
+                return cur_path, len(visited)
+
             if item not in visited:
+                visited.add(item)
                 cost = abs(item[0] - result_row) + abs(item[1] - result_col)
                 pq.put((cost, cur_path + [item]))
     return [], 0
