@@ -76,31 +76,6 @@ def dfs(maze):
     return [], 0
 
 
-# def greedy(maze):
-#     # TODO: Write your code here
-#     # return path, num_states_explored
-#     pq = queue.PriorityQueue()
-#     visited = set()
-#     result_row, result_col = maze.getObjectives()[0]
-#     start_row, start_col = maze.getStart()
-#     # pq item - tuple: (distance, path list)
-#     cost = abs(start_row-result_row) + abs(start_col - result_col)
-#     pq.put((cost, [maze.getStart()]))
-#     while not pq.empty():
-#         cur_path = pq.get()[1]
-#         cur_row, cur_col = cur_path[-1]
-#         if (cur_row, cur_col) in visited:
-#             continue
-#         visited.add((cur_row, cur_col))
-#         if maze.isObjective(cur_row, cur_col):
-#             return cur_path, len(visited)
-#         for item in maze.getNeighbors(cur_row, cur_col):
-#             if item not in visited:
-#                 cost = abs(item[0] - result_row) + abs(item[1] - result_col)
-#                 pq.put((cost, cur_path + [item]))
-#     return [], 0
-
-
 def greedy(maze):
     # TODO: Write your code here
     # return path, num_states_explored
@@ -116,7 +91,7 @@ def greedy(maze):
         cur_row, cur_col = cur_path[-1]
 
         for item in maze.getNeighbors(cur_row, cur_col):
-            item_row, item_col = item[0],item[1]
+            item_row, item_col = item[0], item[1]
             if maze.isObjective(item_row, item_col):
                 visited.add(item)
                 cur_path += [item]
@@ -131,6 +106,8 @@ def greedy(maze):
 # ====================================== PART 2 ===============================================
 # astar for part 1&2
 # self-built data structure
+
+
 class ctor:
     def __init__(self, row, col, cost, tcost):
         self.row = row
@@ -141,15 +118,16 @@ class ctor:
         self.tcost = tcost  # f = g + h（total）
         self.prev = None
         self.not_visited = []
-        self.objective_left = []    
+        self.objective_left = []
 
     def __lt__(self, other):
         return self.tcost < other.tcost
 
+
 def astar(maze):
     # TODO: Write your code here
     # return path, num_states_explored
-    num_of_state=0
+    num_of_state = 0
     if len(maze.getObjectives()) == 1:
         start_1 = maze.getStart()
         end_1 = maze.getObjectives()[0]
@@ -167,7 +145,7 @@ def astar(maze):
                 construct_path = cost_sofar(maze, i, j)[0]
                 edge_list[(i, j)] = construct_path
                 heuristic_list[(i, j)] = len(construct_path)
-                num_of_state+=10
+                num_of_state += 10
     not_visited_list = {}
     visited = {}
     cur_path = queue.PriorityQueue()
@@ -185,13 +163,14 @@ def astar(maze):
             break
         for n in cur_state.not_visited:
             n_row, n_col = n
-            n_cost = cur_state.cost + heuristic_list[(cur_state.position, n)] - 1
+            n_cost = cur_state.cost + \
+                heuristic_list[(cur_state.position, n)] - 1
             next_state = ctor(n_row, n_col, n_cost, 0)
             next_state.prev = cur_state
             next_state.not_visited = deepcopy(cur_state.not_visited)
             if n in next_state.not_visited:
                 next_state.not_visited.remove(n)
-            visited[(n_row, n_col)]=0
+            visited[(n_row, n_col)] = 0
             not_visited_list[n] = len(next_state.not_visited)
             mst_weights = get_MST(maze, cur_state.not_visited, heuristic_list)
             next_state.tcost = n_cost + mst_weights
@@ -201,6 +180,7 @@ def astar(maze):
             cur_path.put(next_state)
     ret_path1 = print_path(maze, edge_list, cur_state, visited)
     return ret_path1, num_of_state
+
 
 def print_path(maze, path, state, visited):
     ret_path = []
@@ -215,6 +195,7 @@ def print_path(maze, path, state, visited):
     ret_path.append(start)
     ret_path[::-1]
     return ret_path
+
 
 def get_MST(maze, goals, heuristic_list):
     # Prim
@@ -256,7 +237,7 @@ def cost_sofar(maze, start, end):
         cur_cost = abs(cur_row - result_row) + \
             abs(cur_col - result_col) + len(cur_path) - 1
         visited[(cur_row, cur_col)] = cur_cost
-        if (cur_row, cur_col)==(result_row, result_col):
+        if (cur_row, cur_col) == (result_row, result_col):
             return cur_path, len(visited)
         for item in maze.getNeighbors(cur_row, cur_col):
             new_cost = abs(item[0] - result_row) + \
@@ -269,7 +250,6 @@ def cost_sofar(maze, start, end):
                     visited[item] = new_cost
                     pq.put((new_cost, cur_path + [item]))
     return [], 0
-
 
 
 # ====================================== extra credit ===============================================
