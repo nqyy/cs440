@@ -95,7 +95,6 @@ def exact_cover(matrix):
 
 
 def exact_cover_helper(A, partial, original_r):
-    # If matrix has no columns, terminate successfully.
     row, col = A.shape
     if col == 0:
         return partial
@@ -103,9 +102,9 @@ def exact_cover_helper(A, partial, original_r):
         c = A.sum(axis=0).argmin()
         if A.sum(axis=0)[c] == 0:
             return None
-        partial_temp = partial.copy()
+        partial_temp = partial
         for r in range(row):
-            B = A.copy()
+            B = A
             if B[r][c] != 1:
                 continue
             r_index = original_r[r]
@@ -126,8 +125,9 @@ def exact_cover_helper(A, partial, original_r):
             B = np.delete(B, col_temp, axis=1)
             new_index = [x for x in list(range(row)) if x not in row_temp]
             new_r = [original_r[x] for x in new_index]
-            if exact_cover_helper(B, partial_temp, new_r) != None:
-                return exact_cover_helper(B, partial_temp, new_r)
+            answer = exact_cover_helper(B, partial_temp, new_r)
+            if answer != None:
+                return answer
             partial_temp.remove(r_index)
 
 

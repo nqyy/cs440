@@ -5,7 +5,8 @@ import numpy as np
 import instances
 from solve import solve
 import time
-    
+
+
 def get_pent_idx(pent):
     """
     Returns the index of a pentomino.
@@ -21,7 +22,8 @@ def get_pent_idx(pent):
     if pidx == 0:
         return -1
     return pidx - 1
-        
+
+
 def is_pentomino(pent, pents):
     """
     Checks if a pentomino pent is part of pents
@@ -30,7 +32,7 @@ def is_pentomino(pent, pents):
     if pidx == -1:
         return False
     true_pent = pents[pidx]
-    
+
     for flipnum in range(3):
         p = np.copy(pent)
         if flipnum > 0:
@@ -40,13 +42,14 @@ def is_pentomino(pent, pents):
                 return True
             p = np.rot90(p)
     return False
-                        
+
+
 def add_pentomino(board, pent, coord, check_pent=False, valid_pents=None):
     """
     Adds a pentomino pent to the board. The pentomino will be placed such that
     coord[0] is the lowest row index of the pent and coord[1] is the lowest 
     column index. 
-    
+
     check_pent will also check if the pentomino is part of the valid pentominos.
     """
     if check_pent and not is_pentomino(pent, valid_pents):
@@ -54,15 +57,17 @@ def add_pentomino(board, pent, coord, check_pent=False, valid_pents=None):
     for row in range(pent.shape[0]):
         for col in range(pent.shape[1]):
             if pent[row][col] != 0:
-                if board[coord[0]+row][coord[1]+col] != 0: # Overlap
+                if board[coord[0]+row][coord[1]+col] != 0:  # Overlap
                     return False
                 else:
                     board[coord[0]+row][coord[1]+col] = pent[row][col]
     return True
-    
+
+
 def remove_pentomino(board, pent_idx):
-    board[board==pent_idx+1] = 0
-        
+    board[board == pent_idx+1] = 0
+
+
 def check_correctness(sol_list, board, pents):
     """
     Sol is a list of pentominos (possibly rotated) and their upper left coordinate
@@ -79,40 +84,75 @@ def check_correctness(sol_list, board, pents):
             return False
         else:
             seen_pents[pidx] = 1
-        if not add_pentomino(sol_board, pent, coord, True, pents): 
+        if not add_pentomino(sol_board, pent, coord, True, pents):
             return False
-            
+
     # Check same number of squares occupied
     if np.count_nonzero(board) != np.count_nonzero(sol_board):
         return False
     # Check overlap
     if np.count_nonzero(board) != np.count_nonzero(np.multiply(board, sol_board)):
         return False
-    
+
     return True
-        
+
 
 if __name__ == "__main__":
     """
     Run python Pentomino.py to check your solution. You can replace 'board' and 
     'pents' with boards of your own. You can start off easy with simple dominos.
-    
+
     We won't gaurantee which tests your code will be run on, however if it runs
     well on the pentomino set you should be fine. The TA solution is able to run
     in <15 sec for the pentominos on the 6x10 board. 
     """
     start = time.time()
 
-    board = instances.empty_chessboard
-    pents = instances.petnominos
-    sol_list = solve(board, pents)
+    board1 = instances.board_3x20
+    board2 = instances.board_5x12
+    board3 = instances.board_6x10
+    board4 = instances.empty_chessboard
+    board5 = instances.board_4x15
 
-    print("spent:", time.time() - start)
-    
-    if check_correctness(sol_list, board, pents):
-        print("PASSED!")
+    pents = instances.petnominos
+
+    sol_list1 = solve(board1, pents)
+    end1 = time.time() - start
+    start2 = time.time()
+    sol_list2 = solve(board2, pents)
+    end2 = time.time() - start2
+    start3 = time.time()
+    sol_list3 = solve(board3, pents)
+    end3 = time.time() - start3
+    start4 = time.time()
+    sol_list4 = solve(board4, pents)
+    end4 = time.time() - start4
+    start5 = time.time()
+    sol_list5 = solve(board5, pents)
+    end5 = time.time() - start5
+
+    if check_correctness(sol_list1, board1, pents):
+        print("PASSED1!")
     else:
-        print("FAILED...")
-    
-    
-   
+        print("FAILED1...")
+    print("spent:", end1)
+    if check_correctness(sol_list2, board2, pents):
+        print("PASSED2!")
+    else:
+        print("FAILED2...")
+    print("spent:", end2)
+    if check_correctness(sol_list3, board3, pents):
+        print("PASSED3!")
+    else:
+        print("FAILED3...")
+    print("spent:", end3)
+    if check_correctness(sol_list4, board4, pents):
+        print("PASSED4!")
+    else:
+        print("FAILED4...")
+    print("spent:", end4)
+    if check_correctness(sol_list5, board5, pents):
+        print("PASSED5!")
+    else:
+        print("FAILED5...")
+    print("spent:", end5)
