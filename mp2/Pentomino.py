@@ -4,6 +4,7 @@
 import numpy as np
 import instances
 from solve import solve
+import time
     
 def get_pent_idx(pent):
     """
@@ -100,9 +101,14 @@ if __name__ == "__main__":
     well on the pentomino set you should be fine. The TA solution is able to run
     in <15 sec for the pentominos on the 6x10 board. 
     """
-    board = instances.board_6x10
-    pents = instances.dominos
+    start = time.time()
+
+    board = instances.empty_chessboard
+    pents = instances.petnominos
     sol_list = solve(board, pents)
+
+    print("spent:", time.time() - start)
+    
     if check_correctness(sol_list, board, pents):
         print("PASSED!")
     else:
