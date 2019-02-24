@@ -2,6 +2,7 @@ from time import sleep
 from math import inf
 from random import randint
 import pprint
+import time
 
 class ultimateTicTacToe:
     def __init__(self):
@@ -103,6 +104,12 @@ class ultimateTicTacToe:
                 counter_500 += 1
             if  self.board[row+2][col+1] == self.board[row+2][col+2] == cur_player and self.board[row+2][col] == '_':
                 counter_500 += 1
+            if  self.board[row][col] == self.board[row][col+2] == cur_player and self.board[row][col+1] == '_':
+                counter_500 += 1
+            if  self.board[row+1][col] == self.board[row+1][col+2] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+            if  self.board[row+2][col] == self.board[row+2][col+2] == cur_player and self.board[row+2][col+1] == '_':
+                counter_500 += 1
             # COL
             if  self.board[row][col] == self.board[row+1][col] == cur_player and self.board[row+2][col] == '_':
                 counter_500 += 1
@@ -115,6 +122,12 @@ class ultimateTicTacToe:
             if  self.board[row][col+2] == self.board[row+1][col+2] == cur_player and self.board[row+2][col+2] == '_':
                 counter_500 += 1
             if  self.board[row+1][col+2] == self.board[row+2][col+2] == cur_player and self.board[row][col+2] == '_':
+                counter_500 += 1
+            if  self.board[row][col] == self.board[row+2][col] == cur_player and self.board[row+1][col] == '_':
+                counter_500 += 1
+            if  self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+            if  self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
                 counter_500 += 1
             # DIA
             if self.board[row][col] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+2] == '_':
@@ -143,6 +156,12 @@ class ultimateTicTacToe:
                 counter_100 += 1
             if  self.board[row+2][col+1] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col] == cur_player:
                 counter_100 += 1
+            if  self.board[row][col] == self.board[row][col+2] == opponent_player and self.board[row][col+1] == cur_player:
+                counter_100 += 1
+            if  self.board[row+1][col] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+            if  self.board[row+2][col] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col+1] == cur_player:
+                counter_100 += 1
             # COL
             if  self.board[row][col] == self.board[row+1][col] == opponent_player and self.board[row+2][col] == cur_player:
                 counter_100 += 1
@@ -155,6 +174,12 @@ class ultimateTicTacToe:
             if  self.board[row][col+2] == self.board[row+1][col+2] == opponent_player and self.board[row+2][col+2] == cur_player:
                 counter_100 += 1
             if  self.board[row+1][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row][col+2] == cur_player:
+                counter_100 += 1
+            if  self.board[row][col] == self.board[row+2][col] == opponent_player and self.board[row+1][col] == cur_player:
+                counter_100 += 1
+            if  self.board[row][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+            if  self.board[row][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row+1][col+2] == cur_player:
                 counter_100 += 1
             # DIA
             if self.board[row][col] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
@@ -173,7 +198,7 @@ class ultimateTicTacToe:
         if isMax:
             score = score + 500 * counter_500 + 100 * counter_100
         else:
-            score = score - (500 * counter_500 + 100 * counter_100)
+            score = score - (100 * counter_500 + 500 * counter_100)
 
         for i in range(9):
             row, col = self.globalIdx[i]
@@ -259,50 +284,51 @@ class ultimateTicTacToe:
         bestValue(float):the bestValue that current player may have
         """
         # YOUR CODE HERE
-        if depth > 3 or (self.checkWinner() != 0) or not self.checkMovesLeft():
+        if (depth == self.maxDepth) or (not self.checkMovesLeft()) or (self.checkWinner() != 0):
             return self.evaluatePredifined(isMax)
 
         if isMax:
-            bestValue = -5000
+            # max from child
+            best_value = -10000
+            best_coord = (-1, -1)
             y, x = self.globalIdx[currBoardIdx]
-            for i in range(3):
-                for j in range(3):
-                    if self.board[j+y][i+x] == '_':
+            for j in range(3):
+                for i in range(3):
+                    if self.board[y+j][x+i] == '_':
                         self.expandedNodes += 1
-                        self.board[j+y][i+x] = self.maxPlayer
-                        self.expandedNodes += 1
-                        self.startBoardIdx = self.getnextBoardIdx(i+x, j+y)
-                        curValue = self.alphabeta(
-                            depth + 1, self.startBoardIdx, alpha, beta, not isMax)
-                        if curValue > bestValue:
-                            self.coordinate = (i+x, j+y)
-                        bestValue = max(bestValue, curValue)
-                        self.board[j+y][i+x] = '_'
-                        alpha = max(alpha, bestValue)
+                        self.board[y+j][x+i] = self.maxPlayer
+                        cur_value = self.alphabeta(depth+1, self.getnextBoardIdx(x+i, y+j), alpha, beta, not isMax)
+                        self.board[y+j][x+i] = '_'
+                        if cur_value > best_value:
+                            best_value = cur_value
+                            best_coord = (y+j, x+i)
+                        beta = min(beta, best_value)
                         if beta <= alpha:
-                            break
-            return bestValue
-
+                            self.best_coordinate = best_coord
+                            return best_value
+            self.best_coordinate = best_coord
+            return best_value
         else:
-            bestValue = 5000
+            # min from child
+            best_value = 10000
+            best_coord = (-1, -1)
             y, x = self.globalIdx[currBoardIdx]
-            for i in range(3):
-                for j in range(3):
-                    if self.board[j+y][i+x] == '_':
+            for j in range(3):
+                for i in range(3):
+                    if self.board[y+j][x+i] == '_':
                         self.expandedNodes += 1
-                        self.board[j+y][i+x] = self.minPlayer
-                        self.expandedNodes += 1
-                        self.startBoardIdx = self.getnextBoardIdx(i+x, j+y)
-                        curValue = self.alphabeta(
-                            depth + 1, self.startBoardIdx, alpha, beta, not isMax)
-                        if curValue < bestValue:
-                            self.coordinate = (i+x, j+y)
-                        bestValue = min(bestValue, curValue)
-                        self.board[j+y][i+x] = '_'
-                        alpha = min(alpha, bestValue)
+                        self.board[y+j][x+i] = self.minPlayer
+                        cur_value = self.alphabeta(depth+1, self.getnextBoardIdx(x+i, y+j), alpha, beta, not isMax)
+                        self.board[y+j][x+i] = '_'
+                        if cur_value < best_value:
+                            best_value = cur_value
+                            best_coord = (y+j, x+i)
+                        alpha = max(alpha, best_value)
                         if beta <= alpha:
-                            break
-            return bestValue
+                            self.best_coordinate = best_coord
+                            return best_value
+            self.best_coordinate = best_coord
+            return best_value
 
     def minimax(self, depth, currBoardIdx, isMax):
         """
@@ -329,6 +355,7 @@ class ultimateTicTacToe:
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
+                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.maxPlayer
                         cur_value = self.minimax(depth+1, self.getnextBoardIdx(x+i, y+j), not isMax)
                         self.board[y+j][x+i] = '_'
@@ -345,6 +372,7 @@ class ultimateTicTacToe:
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
+                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.minPlayer
                         cur_value = self.minimax(depth+1, self.getnextBoardIdx(x+i, y+j), not isMax)
                         self.board[y+j][x+i] = '_'
@@ -378,8 +406,8 @@ class ultimateTicTacToe:
         expandedNodes = []
         winner = 0
 
-        alpha = 0  # to be assigned
-        beta = 0  # to be assigned
+        alpha = -inf  # to be assigned
+        beta = inf  # to be assigned
         while self.checkMovesLeft():
             # winner check
             winner = self.checkWinner()
@@ -467,8 +495,10 @@ class ultimateTicTacToe:
 if __name__ == "__main__":
     uttt = ultimateTicTacToe()
 
+    start = time.time()
     gameBoards, bestMove, expandedNodes, bestValue, winner = uttt.playGamePredifinedAgent(
-        True, True, True)
+        True, False, False)
+    print(time.time() - start)
 
     if winner == 1:
         print("The winner is maxPlayer!!!")
