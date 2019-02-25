@@ -1,8 +1,8 @@
 from time import sleep
 from math import inf
 from random import randint
-import pprint
 import time
+
 
 class ultimateTicTacToe:
     def __init__(self):
@@ -27,7 +27,7 @@ class ultimateTicTacToe:
 
         # Start local board index for reflex agent playing
         self.startBoardIdx = 4
-        # self.startBoardIdx=randint(0,8)
+        # self.startBoardIdx = randint(0, 8)
 
         # utility value for reflex offensive and reflex defensive agents
         self.winnerMaxUtility = 10000
@@ -43,11 +43,8 @@ class ultimateTicTacToe:
         self.expandedNodes = 0
         self.currPlayer = True
 
-        # self.coordinate = (-1, -1)  # coordinate to put mark
-        self.best_coordinate = (0, 0)
-
-    def getnextBoardIdx(self, x, y):
-        return (y % 3) * 3 + x % 3
+    def getNextBoardIdx(self, i, j):
+        return (i % 3) * 3 + j % 3
 
     def printGameBoard(self):
         """
@@ -70,129 +67,140 @@ class ultimateTicTacToe:
         score(float): estimated utility score for maxPlayer or minPlayer
         """
         # YOUR CODE HERE
-        Whowins = self.checkWinner()
-        if Whowins and isMax:
+        if self.checkWinner() == 1 and isMax:
             return 10000
-        elif Whowins == -1 and isMax == False:
+        elif self.checkWinner() == -1 and not isMax:
             return -10000
+
         score = 0
 
         counter_500 = 0
         counter_100 = 0
         for i in range(9):
             row, col = self.globalIdx[i]
-    
+
             cur_player = ''
             opponent_player = ''
             if isMax:
-                cur_player = self.maxPlayer 
-                opponent_player = self.minPlayer 
+                cur_player = self.maxPlayer
+                opponent_player = self.minPlayer
             else:
                 cur_player = self.minPlayer
-                opponent_player = self.maxPlayer 
+                opponent_player = self.maxPlayer
             # 500
             # ROW
-            if  self.board[row][col] == self.board[row][col+1] == cur_player and self.board[row][col+2] == '_':
+            if self.board[row][col] == self.board[row][col+1] == cur_player and self.board[row][col+2] == '_':
                 counter_500 += 1
-            if  self.board[row][col+1] == self.board[row][col+2] == cur_player and self.board[row][col] == '_':
+            elif self.board[row][col+1] == self.board[row][col+2] == cur_player and self.board[row][col] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col] == self.board[row+1][col+1] == cur_player and self.board[row+1][col+2] == '_':
+            elif self.board[row][col] == self.board[row][col+2] == cur_player and self.board[row][col+1] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col+1] == self.board[row+1][col+2] == cur_player and self.board[row+1][col] == '_':
+
+            if self.board[row+1][col] == self.board[row+1][col+1] == cur_player and self.board[row+1][col+2] == '_':
                 counter_500 += 1
-            if  self.board[row+2][col] == self.board[row+2][col+1] == cur_player and self.board[row+2][col+2] == '_':
+            elif self.board[row+1][col+1] == self.board[row+1][col+2] == cur_player and self.board[row+1][col] == '_':
                 counter_500 += 1
-            if  self.board[row+2][col+1] == self.board[row+2][col+2] == cur_player and self.board[row+2][col] == '_':
+            elif self.board[row+1][col] == self.board[row+1][col+2] == cur_player and self.board[row+1][col+1] == '_':
                 counter_500 += 1
-            if  self.board[row][col] == self.board[row][col+2] == cur_player and self.board[row][col+1] == '_':
+
+            if self.board[row+2][col] == self.board[row+2][col+1] == cur_player and self.board[row+2][col+2] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col] == self.board[row+1][col+2] == cur_player and self.board[row+1][col+1] == '_':
+            elif self.board[row+2][col+1] == self.board[row+2][col+2] == cur_player and self.board[row+2][col] == '_':
                 counter_500 += 1
-            if  self.board[row+2][col] == self.board[row+2][col+2] == cur_player and self.board[row+2][col+1] == '_':
+            elif self.board[row+2][col] == self.board[row+2][col+2] == cur_player and self.board[row+2][col+1] == '_':
                 counter_500 += 1
             # COL
-            if  self.board[row][col] == self.board[row+1][col] == cur_player and self.board[row+2][col] == '_':
+            if self.board[row][col] == self.board[row+1][col] == cur_player and self.board[row+2][col] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col] == self.board[row+2][col] == cur_player and self.board[row][col] == '_':
+            elif self.board[row+1][col] == self.board[row+2][col] == cur_player and self.board[row][col] == '_':
                 counter_500 += 1
-            if  self.board[row][col+1] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+1] == '_':
+            elif self.board[row][col] == self.board[row+2][col] == cur_player and self.board[row+1][col] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col+1] == self.board[row+2][col+1] == cur_player and self.board[row][col+1] == '_':
+
+            if self.board[row][col+1] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+1] == '_':
                 counter_500 += 1
-            if  self.board[row][col+2] == self.board[row+1][col+2] == cur_player and self.board[row+2][col+2] == '_':
+            elif self.board[row+1][col+1] == self.board[row+2][col+1] == cur_player and self.board[row][col+1] == '_':
                 counter_500 += 1
-            if  self.board[row+1][col+2] == self.board[row+2][col+2] == cur_player and self.board[row][col+2] == '_':
+            elif self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
                 counter_500 += 1
-            if  self.board[row][col] == self.board[row+2][col] == cur_player and self.board[row+1][col] == '_':
+
+            if self.board[row][col+2] == self.board[row+1][col+2] == cur_player and self.board[row+2][col+2] == '_':
                 counter_500 += 1
-            if  self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
+            elif self.board[row+1][col+2] == self.board[row+2][col+2] == cur_player and self.board[row][col+2] == '_':
                 counter_500 += 1
-            if  self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
+            elif self.board[row][col+2] == self.board[row+2][col+2] == cur_player and self.board[row+1][col+2] == '_':
                 counter_500 += 1
             # DIA
             if self.board[row][col] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+2] == '_':
                 counter_500 += 1
-            if self.board[row+2][col+2] == self.board[row+1][col+1] == cur_player and self.board[row][col] == '_':
+            elif self.board[row+2][col+2] == self.board[row+1][col+1] == cur_player and self.board[row][col] == '_':
                 counter_500 += 1
-            if self.board[row+2][col+2] == self.board[row][col] == cur_player and self.board[row+1][col+1] == '_':
+            elif self.board[row+2][col+2] == self.board[row][col] == cur_player and self.board[row+1][col+1] == '_':
                 counter_500 += 1
+
             if self.board[row][col+2] == self.board[row+1][col+1] == cur_player and self.board[row+2][col] == '_':
                 counter_500 += 1
-            if self.board[row][col+2] == self.board[row+2][col] == cur_player and self.board[row+1][col+1] == '_':
+            elif self.board[row][col+2] == self.board[row+2][col] == cur_player and self.board[row+1][col+1] == '_':
                 counter_500 += 1
-            if self.board[row+1][col+1] == self.board[row+2][col] == cur_player and self.board[row][col+2] == '_':
+            elif self.board[row+1][col+1] == self.board[row+2][col] == cur_player and self.board[row][col+2] == '_':
                 counter_500 += 1
             # 100
             # ROW
-            if  self.board[row][col] == self.board[row][col+1] == opponent_player and self.board[row][col+2] == cur_player:
+            if self.board[row][col] == self.board[row][col+1] == opponent_player and self.board[row][col+2] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col+1] == self.board[row][col+2] == opponent_player and self.board[row][col] == cur_player:
+            elif self.board[row][col+1] == self.board[row][col+2] == opponent_player and self.board[row][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col] == self.board[row+1][col+1] == opponent_player and self.board[row+1][col+2] == cur_player:
+            elif self.board[row][col] == self.board[row][col+2] == opponent_player and self.board[row][col+1] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col+1] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col] == cur_player:
+
+            if self.board[row+1][col] == self.board[row+1][col+1] == opponent_player and self.board[row+1][col+2] == cur_player:
                 counter_100 += 1
-            if  self.board[row+2][col] == self.board[row+2][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
+            elif self.board[row+1][col+1] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row+2][col+1] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col] == cur_player:
+            elif self.board[row+1][col] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col+1] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col] == self.board[row][col+2] == opponent_player and self.board[row][col+1] == cur_player:
+
+            if self.board[row+2][col] == self.board[row+2][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col+1] == cur_player:
+            elif self.board[row+2][col+1] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row+2][col] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col+1] == cur_player:
+            elif self.board[row+2][col] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col+1] == cur_player:
                 counter_100 += 1
+
             # COL
-            if  self.board[row][col] == self.board[row+1][col] == opponent_player and self.board[row+2][col] == cur_player:
+            if self.board[row][col] == self.board[row+1][col] == opponent_player and self.board[row+2][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col] == self.board[row+2][col] == opponent_player and self.board[row][col] == cur_player:
+            elif self.board[row+1][col] == self.board[row+2][col] == opponent_player and self.board[row][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col+1] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+1] == cur_player:
+            elif self.board[row][col] == self.board[row+2][col] == opponent_player and self.board[row+1][col] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row][col+1] == cur_player:
+
+            if self.board[row][col+1] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+1] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col+2] == self.board[row+1][col+2] == opponent_player and self.board[row+2][col+2] == cur_player:
+            elif self.board[row+1][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row][col+1] == cur_player:
                 counter_100 += 1
-            if  self.board[row+1][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row][col+2] == cur_player:
+            elif self.board[row][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row+1][col+1] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col] == self.board[row+2][col] == opponent_player and self.board[row+1][col] == cur_player:
+
+            if self.board[row][col+2] == self.board[row+1][col+2] == opponent_player and self.board[row+2][col+2] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row+1][col+1] == cur_player:
+            elif self.board[row+1][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row][col+2] == cur_player:
                 counter_100 += 1
-            if  self.board[row][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row+1][col+2] == cur_player:
+            elif self.board[row][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row+1][col+2] == cur_player:
                 counter_100 += 1
             # DIA
             if self.board[row][col] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
                 counter_100 += 1
-            if self.board[row+2][col+2] == self.board[row+1][col+1] == opponent_player and self.board[row][col] == cur_player:
+            elif self.board[row+2][col+2] == self.board[row+1][col+1] == opponent_player and self.board[row][col] == cur_player:
                 counter_100 += 1
-            if self.board[row+2][col+2] == self.board[row][col] == opponent_player and self.board[row+1][col+1] == cur_player:
+            elif self.board[row+2][col+2] == self.board[row][col] == opponent_player and self.board[row+1][col+1] == cur_player:
                 counter_100 += 1
+
             if self.board[row][col+2] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col] == cur_player:
                 counter_100 += 1
-            if self.board[row][col+2] == self.board[row+2][col] == opponent_player and self.board[row+1][col+1] == cur_player:
+            elif self.board[row][col+2] == self.board[row+2][col] == opponent_player and self.board[row+1][col+1] == cur_player:
                 counter_100 += 1
-            if self.board[row+1][col+1] == self.board[row+2][col] == opponent_player and self.board[row][col+2] == cur_player:
+            elif self.board[row+1][col+1] == self.board[row+2][col] == opponent_player and self.board[row][col+2] == cur_player:
                 counter_100 += 1
 
         if isMax:
@@ -200,13 +208,14 @@ class ultimateTicTacToe:
         else:
             score = score - (100 * counter_500 + 500 * counter_100)
 
-        for i in range(9):
-            row, col = self.globalIdx[i]
-            for x, y in [(row, col), (row+2, col), (row, col+2), (row+2, col+2)]:
-                if self.board[x][y] == self.maxPlayer and isMax:
-                    score += 30
-                elif self.board[x][y] == self.minPlayer and isMax == False:
-                    score -= 30
+        if score == 0:
+            for i in range(9):
+                row, col = self.globalIdx[i]
+                for y, x in [(row, col), (row+2, col), (row, col+2), (row+2, col+2)]:
+                    if self.board[y][x] == self.maxPlayer and isMax:
+                        score += 30
+                    elif self.board[y][x] == self.minPlayer and not isMax:
+                        score -= 30
         return score
 
     def evaluateDesigned(self, isMax):
@@ -219,7 +228,154 @@ class ultimateTicTacToe:
         score(float): estimated utility score for maxPlayer or minPlayer
         """
         # YOUR CODE HERE
+        if self.checkWinner() == 1:
+            return 10000
+        elif self.checkWinner() == -1:
+            return -10000
+
         score = 0
+
+        counter_500 = 0
+        counter_100 = 0
+        for i in range(9):
+            row, col = self.globalIdx[i]
+
+            cur_player = ''
+            opponent_player = ''
+            if isMax:
+                cur_player = self.maxPlayer
+                opponent_player = self.minPlayer
+            else:
+                cur_player = self.minPlayer
+                opponent_player = self.maxPlayer
+            # 500
+            # ROW
+            if self.board[row][col] == self.board[row][col+1] == cur_player and self.board[row][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row][col+1] == self.board[row][col+2] == cur_player and self.board[row][col] == '_':
+                counter_500 += 1
+            elif self.board[row][col] == self.board[row][col+2] == cur_player and self.board[row][col+1] == '_':
+                counter_500 += 1
+
+            if self.board[row+1][col] == self.board[row+1][col+1] == cur_player and self.board[row+1][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col+1] == self.board[row+1][col+2] == cur_player and self.board[row+1][col] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col] == self.board[row+1][col+2] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+
+            if self.board[row+2][col] == self.board[row+2][col+1] == cur_player and self.board[row+2][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row+2][col+1] == self.board[row+2][col+2] == cur_player and self.board[row+2][col] == '_':
+                counter_500 += 1
+            elif self.board[row+2][col] == self.board[row+2][col+2] == cur_player and self.board[row+2][col+1] == '_':
+                counter_500 += 1
+            # COL
+            if self.board[row][col] == self.board[row+1][col] == cur_player and self.board[row+2][col] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col] == self.board[row+2][col] == cur_player and self.board[row][col] == '_':
+                counter_500 += 1
+            elif self.board[row][col] == self.board[row+2][col] == cur_player and self.board[row+1][col] == '_':
+                counter_500 += 1
+
+            if self.board[row][col+1] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+1] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col+1] == self.board[row+2][col+1] == cur_player and self.board[row][col+1] == '_':
+                counter_500 += 1
+            elif self.board[row][col+1] == self.board[row+2][col+1] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+
+            if self.board[row][col+2] == self.board[row+1][col+2] == cur_player and self.board[row+2][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col+2] == self.board[row+2][col+2] == cur_player and self.board[row][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row][col+2] == self.board[row+2][col+2] == cur_player and self.board[row+1][col+2] == '_':
+                counter_500 += 1
+            # DIA
+            if self.board[row][col] == self.board[row+1][col+1] == cur_player and self.board[row+2][col+2] == '_':
+                counter_500 += 1
+            elif self.board[row+2][col+2] == self.board[row+1][col+1] == cur_player and self.board[row][col] == '_':
+                counter_500 += 1
+            elif self.board[row+2][col+2] == self.board[row][col] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+
+            if self.board[row][col+2] == self.board[row+1][col+1] == cur_player and self.board[row+2][col] == '_':
+                counter_500 += 1
+            elif self.board[row][col+2] == self.board[row+2][col] == cur_player and self.board[row+1][col+1] == '_':
+                counter_500 += 1
+            elif self.board[row+1][col+1] == self.board[row+2][col] == cur_player and self.board[row][col+2] == '_':
+                counter_500 += 1
+            # 100
+            # ROW
+            if self.board[row][col] == self.board[row][col+1] == opponent_player and self.board[row][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col+1] == self.board[row][col+2] == opponent_player and self.board[row][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col] == self.board[row][col+2] == opponent_player and self.board[row][col+1] == cur_player:
+                counter_100 += 1
+
+            if self.board[row+1][col] == self.board[row+1][col+1] == opponent_player and self.board[row+1][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col+1] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col] == self.board[row+1][col+2] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+
+            if self.board[row+2][col] == self.board[row+2][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row+2][col+1] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row+2][col] == self.board[row+2][col+2] == opponent_player and self.board[row+2][col+1] == cur_player:
+                counter_100 += 1
+
+            # COL
+            if self.board[row][col] == self.board[row+1][col] == opponent_player and self.board[row+2][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col] == self.board[row+2][col] == opponent_player and self.board[row][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col] == self.board[row+2][col] == opponent_player and self.board[row+1][col] == cur_player:
+                counter_100 += 1
+
+            if self.board[row][col+1] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+1] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row][col+1] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col+1] == self.board[row+2][col+1] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+
+            if self.board[row][col+2] == self.board[row+1][col+2] == opponent_player and self.board[row+2][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col+2] == self.board[row+2][col+2] == opponent_player and self.board[row+1][col+2] == cur_player:
+                counter_100 += 1
+            # DIA
+            if self.board[row][col] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col+2] == cur_player:
+                counter_100 += 1
+            elif self.board[row+2][col+2] == self.board[row+1][col+1] == opponent_player and self.board[row][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row+2][col+2] == self.board[row][col] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+
+            if self.board[row][col+2] == self.board[row+1][col+1] == opponent_player and self.board[row+2][col] == cur_player:
+                counter_100 += 1
+            elif self.board[row][col+2] == self.board[row+2][col] == opponent_player and self.board[row+1][col+1] == cur_player:
+                counter_100 += 1
+            elif self.board[row+1][col+1] == self.board[row+2][col] == opponent_player and self.board[row][col+2] == cur_player:
+                counter_100 += 1
+
+        if isMax:
+            score = score + 500 * counter_500 + 100 * counter_100
+        else:
+            score = score - (100 * counter_500 + 500 * counter_100)
+
+        for i in range(9):
+            row, col = self.globalIdx[i]
+            for y, x in [(row, col), (row+2, col), (row, col+2), (row+2, col+2)]:
+                if self.board[y][x] == self.maxPlayer:
+                    score += 30
+                elif self.board[y][x] == self.minPlayer:
+                    score -= 30
         return score
 
     def checkMovesLeft(self):
@@ -281,53 +437,42 @@ class ultimateTicTacToe:
         isMax(bool):boolean variable indicates whether it's maxPlayer or minPlayer.
                      True for maxPlayer, False for minPlayer
         output:
-        bestValue(float):the bestValue that current player may have
+        best_value(float):the best_value that current player may have
         """
         # YOUR CODE HERE
         if (depth == self.maxDepth) or (not self.checkMovesLeft()) or (self.checkWinner() != 0):
-            return self.evaluatePredifined(isMax)
+            self.expandedNodes += 1
+            return self.evaluatePredifined(self.currPlayer)
 
         if isMax:
             # max from child
-            best_value = -10000
-            best_coord = (-1, -1)
+            best_value = -inf
             y, x = self.globalIdx[currBoardIdx]
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
-                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.maxPlayer
-                        cur_value = self.alphabeta(depth+1, self.getnextBoardIdx(x+i, y+j), alpha, beta, not isMax)
+                        cur_value = self.alphabeta(depth+1, self.getNextBoardIdx(y+j, x+i), alpha, beta, not isMax)
                         self.board[y+j][x+i] = '_'
-                        if cur_value > best_value:
-                            best_value = cur_value
-                            best_coord = (y+j, x+i)
-                        beta = min(beta, best_value)
+                        best_value = max(best_value, cur_value)
+                        alpha = max(alpha, best_value)
                         if beta <= alpha:
-                            self.best_coordinate = best_coord
                             return best_value
-            self.best_coordinate = best_coord
             return best_value
         else:
             # min from child
-            best_value = 10000
-            best_coord = (-1, -1)
+            best_value = inf
             y, x = self.globalIdx[currBoardIdx]
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
-                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.minPlayer
-                        cur_value = self.alphabeta(depth+1, self.getnextBoardIdx(x+i, y+j), alpha, beta, not isMax)
+                        cur_value = self.alphabeta(depth+1, self.getNextBoardIdx(y+j, x+i), alpha, beta, not isMax)
                         self.board[y+j][x+i] = '_'
-                        if cur_value < best_value:
-                            best_value = cur_value
-                            best_coord = (y+j, x+i)
-                        alpha = max(alpha, best_value)
+                        best_value = min(best_value, cur_value)
+                        beta = min(beta, best_value)
                         if beta <= alpha:
-                            self.best_coordinate = best_coord
                             return best_value
-            self.best_coordinate = best_coord
             return best_value
 
     def minimax(self, depth, currBoardIdx, isMax):
@@ -345,41 +490,32 @@ class ultimateTicTacToe:
         """
         # YOUR CODE HERE
         if (depth == self.maxDepth) or (not self.checkMovesLeft()) or (self.checkWinner() != 0):
-            return self.evaluatePredifined(isMax)
+            self.expandedNodes += 1
+            return self.evaluatePredifined(self.currPlayer)
 
         if isMax:
             # max from child
-            best_value = -10000
-            best_coord = (-1, -1)
+            best_value = -inf
             y, x = self.globalIdx[currBoardIdx]
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
-                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.maxPlayer
-                        cur_value = self.minimax(depth+1, self.getnextBoardIdx(x+i, y+j), not isMax)
+                        cur_value = self.minimax(depth+1, self.getNextBoardIdx(y+j, x+i), not isMax)
                         self.board[y+j][x+i] = '_'
-                        if cur_value > best_value:
-                            best_value = cur_value
-                            best_coord = (y+j, x+i)
-            self.best_coordinate = best_coord
+                        best_value = max(best_value, cur_value)
             return best_value
         else:
             # min from child
-            best_value = 10000
-            best_coord = (-1, -1)
+            best_value = inf
             y, x = self.globalIdx[currBoardIdx]
             for j in range(3):
                 for i in range(3):
                     if self.board[y+j][x+i] == '_':
-                        self.expandedNodes += 1
                         self.board[y+j][x+i] = self.minPlayer
-                        cur_value = self.minimax(depth+1, self.getnextBoardIdx(x+i, y+j), not isMax)
+                        cur_value = self.minimax(depth+1, self.getNextBoardIdx(y+j, x+i), not isMax)
                         self.board[y+j][x+i] = '_'
-                        if cur_value < best_value:
-                            best_value = cur_value
-                            best_coord = (y+j, x+i)
-            self.best_coordinate = best_coord
+                        best_value = min(best_value, cur_value)
             return best_value
 
     def playGamePredifinedAgent(self, maxFirst, isMinimaxOffensive, isMinimaxDefensive):
@@ -400,105 +536,261 @@ class ultimateTicTacToe:
         winner(int): 1 for maxPlayer is the winner, -1 for minPlayer is the winner, and 0 for tie.
         """
         # YOUR CODE HERE
+        cur_player = maxFirst
+        cur_board = self.startBoardIdx
+        self.expandedNodes = 0
         bestMove = []
         bestValue = []
         gameBoards = []
         expandedNodes = []
-        winner = 0
 
-        alpha = -inf  # to be assigned
-        beta = inf  # to be assigned
-        while self.checkMovesLeft():
-            # winner check
-            winner = self.checkWinner()
-            if winner != 0:
-                break
-            # do the stuff
-            if maxFirst:
-                for count in range(2):
-                    if count == 0:  # max player (offensive player)
-                        if isMinimaxOffensive:
-                            best_val = self.minimax(1, self.startBoardIdx, True)
-                        else:
-                            best_val = self.alphabeta(1, self.startBoardIdx, alpha, beta, True)
-                        self.board[self.best_coordinate[0]][self.best_coordinate[1]] = self.maxPlayer
-
-                    else:  # min player (defenseive player)
-                        if isMinimaxDefensive:
-                            best_val = self.minimax(1, self.startBoardIdx, False)
-                        else:
-                            best_val = self.alphabeta(1, self.startBoardIdx, alpha, beta, False)
-                        self.board[self.best_coordinate[0]][self.best_coordinate[1]] = self.minPlayer
-
-                    self.startBoardIdx = self.getnextBoardIdx(self.best_coordinate[1],self.best_coordinate[0])
-                    bestMove.append(self.best_coordinate)
-                    bestValue.append(best_val)
-                    gameBoards.append(self.board)
-                    expandedNodes.append(self.expandedNodes)
-                    self.expandedNodes = 0
-                    pprint.pprint(self.board)
+        alpha = -inf
+        beta = inf
+        while self.checkMovesLeft() and self.checkWinner() == 0:
+            if cur_player:
+                self.currPlayer = True
+                y, x = self.globalIdx[cur_board]
+                best_coord = (-1, -1)
+                best_value = -inf
+                for j in range(3):
+                    for i in range(3):
+                        if self.board[y+j][x+i] == '_':
+                            self.board[y+j][x+i] = self.maxPlayer
+                            cur_board = self.getNextBoardIdx(y+j, x+i)
+                            if isMinimaxOffensive:
+                                cur_value = self.minimax(1, cur_board, not cur_player)
+                            else:
+                                cur_value = self.alphabeta(1, cur_board, alpha, beta, not cur_player)
+                            self.board[y+j][x+i] = '_'
+                            if cur_value > best_value:
+                                best_coord = (y+j, x+i)
+                                best_value = cur_value
+                self.board[best_coord[0]][best_coord[1]] = self.maxPlayer
+                cur_board = self.getNextBoardIdx(best_coord[0], best_coord[1])
+                bestMove.append(best_coord)
+                bestValue.append(best_value)
+                gameBoards.append(self.board)
+                expandedNodes.append(self.expandedNodes)
+                self.printGameBoard()
+                cur_player = not cur_player
             else:
-                for count in range(2):
-                    if count == 1:  # max player (offensive player)
-                        if isMinimaxOffensive:
-                            best_val = self.minimax(1, self.startBoardIdx, True)
-                        else:
-                            best_val = self.alphabeta(1, self.startBoardIdx, alpha, beta, True)
-                        self.board[self.best_coordinate[0]][self.best_coordinate[1]] = self.maxPlayer
-                    else:  # min player (defenseive player)
-                        if isMinimaxDefensive:
-                            best_val = self.minimax(1, self.startBoardIdx, False)
-                        else:
-                            best_val = self.alphabeta(1, self.startBoardIdx, alpha, beta, False)
-                        self.board[self.best_coordinate[0]][self.best_coordinate[1]] = self.minPlayer
-                    
-                    self.startBoardIdx = self.getnextBoardIdx(self.best_coordinate[1],self.best_coordinate[0])
-                    bestMove.append(self.best_coordinate)
-                    bestValue.append(best_val)
-                    gameBoards.append(self.board)
-                    expandedNodes.append(self.expandedNodes)
-                    self.expandedNodes = 0
-                    pprint.pprint(self.board)
+                self.currPlayer = False
+                y, x = self.globalIdx[cur_board]
+                best_coord = (-1, -1)
+                best_value = inf
+                for j in range(3):
+                    for i in range(3):
+                        if self.board[y+j][x+i] == '_':
+                            self.board[y+j][x+i] = self.minPlayer
+                            cur_board = self.getNextBoardIdx(y+j, x+i)
+                            if isMinimaxDefensive:
+                                cur_value = self.minimax(1, cur_board, not cur_player)
+                            else:
+                                cur_value = self.alphabeta(1, cur_board, alpha, beta, not cur_player)
+                            self.board[y+j][x+i] = '_'
+                            if cur_value < best_value:
+                                best_coord = (y+j, x+i)
+                                best_value = cur_value
+                self.board[best_coord[0]][best_coord[1]] = self.minPlayer
+                cur_board = self.getNextBoardIdx(best_coord[0], best_coord[1])
+                bestMove.append(best_coord)
+                bestValue.append(best_value)
+                gameBoards.append(self.board)
+                expandedNodes.append(self.expandedNodes)
+                self.printGameBoard()
+                cur_player = not cur_player
 
+        winner = self.checkWinner()
         return gameBoards, bestMove, expandedNodes, bestValue, winner
+
+    def my_minimax(self, depth, currBoardIdx, isMax):
+        """
+        This function implements minimax algorithm for ultimate tic-tac-toe game.
+        input args:
+        depth(int): current depth level
+        currBoardIdx(int): current local board index
+        alpha(float): alpha value
+        beta(float): beta value
+        isMax(bool):boolean variable indicates whether it's maxPlayer or minPlayer.
+                     True for maxPlayer, False for minPlayer
+        output:
+        bestValue(float):the bestValue that current player may have
+        """
+        # YOUR CODE HERE
+        if (depth == self.maxDepth) or (not self.checkMovesLeft()) or (self.checkWinner() != 0):
+            self.expandedNodes += 1
+            return self.evaluateDesigned(self.currPlayer)
+
+        if isMax:
+            # max from child
+            best_value = -inf
+            y, x = self.globalIdx[currBoardIdx]
+            for j in range(3):
+                for i in range(3):
+                    if self.board[y+j][x+i] == '_':
+                        self.board[y+j][x+i] = self.maxPlayer
+                        cur_value = self.my_minimax(depth+1, self.getNextBoardIdx(y+j, x+i), not isMax)
+                        self.board[y+j][x+i] = '_'
+                        best_value = max(best_value, cur_value)
+            return best_value
+        else:
+            # min from child
+            best_value = inf
+            y, x = self.globalIdx[currBoardIdx]
+            for j in range(3):
+                for i in range(3):
+                    if self.board[y+j][x+i] == '_':
+                        self.board[y+j][x+i] = self.minPlayer
+                        cur_value = self.my_minimax(depth+1, self.getNextBoardIdx(y+j, x+i), not isMax)
+                        self.board[y+j][x+i] = '_'
+                        best_value = min(best_value, cur_value)
+            return best_value
 
     def playGameYourAgent(self):
         """
         This function implements the processes of the game of your own agent vs predifined offensive agent.
         input args:
         output:
-        bestMove(list of tuple): list of bestMove coordinates at each step
+        best_coord(list of tuple): list of best_coord coordinates at each step
         gameBoards(list of 2d lists): list of game board positions at each move
         winner(int): 1 for maxPlayer is the winner, -1 for minPlayer is the winner, and 0 for tie.
         """
         # YOUR CODE HERE
+        cur_player = True  # true max first, false min first
+        cur_board = self.startBoardIdx
+        self.expandedNodes = 0
         bestMove = []
+        bestValue = []
         gameBoards = []
-        winner = 0
-        return gameBoards, bestMove, winner
+        expandedNodes = []
+
+        while self.checkMovesLeft() and self.checkWinner() == 0:
+            if cur_player:
+                self.currPlayer = True
+                y, x = self.globalIdx[cur_board]
+                best_coord = (-1, -1)
+                best_value = -inf
+                for j in range(3):
+                    for i in range(3):
+                        if self.board[y+j][x+i] == '_':
+                            self.board[y+j][x+i] = self.maxPlayer
+                            cur_board = self.getNextBoardIdx(y+j, x+i)
+                            cur_value = self.minimax(1, cur_board, not cur_player)
+                            self.board[y+j][x+i] = '_'
+                            if cur_value > best_value:
+                                best_coord = (y+j, x+i)
+                                best_value = cur_value
+                self.board[best_coord[0]][best_coord[1]] = self.maxPlayer
+                cur_board = self.getNextBoardIdx(best_coord[0], best_coord[1])
+                bestMove.append(best_coord)
+                bestValue.append(best_value)
+                gameBoards.append(self.board)
+                expandedNodes.append(self.expandedNodes)
+                self.printGameBoard()
+                cur_player = not cur_player
+            else:
+                self.currPlayer = False
+                y, x = self.globalIdx[cur_board]
+                best_coord = (-1, -1)
+                best_value = inf
+                for j in range(3):
+                    for i in range(3):
+                        if self.board[y+j][x+i] == '_':
+                            self.board[y+j][x+i] = self.minPlayer
+                            cur_board = self.getNextBoardIdx(y+j, x+i)
+                            cur_value = self.my_minimax(1, cur_board, not cur_player)
+                            self.board[y+j][x+i] = '_'
+                            if cur_value < best_value:
+                                best_coord = (y+j, x+i)
+                                best_value = cur_value
+                self.board[best_coord[0]][best_coord[1]] = self.minPlayer
+                cur_board = self.getNextBoardIdx(best_coord[0], best_coord[1])
+                bestMove.append(best_coord)
+                bestValue.append(best_value)
+                gameBoards.append(self.board)
+                expandedNodes.append(self.expandedNodes)
+                self.printGameBoard()
+                cur_player = not cur_player
+
+        winner = self.checkWinner()
+        return gameBoards, bestMove, expandedNodes, bestValue, winner
 
     def playGameHuman(self):
         """
         This function implements the processes of the game of your own agent vs a human.
         output:
-        bestMove(list of tuple): list of bestMove coordinates at each step
+        best_coord(list of tuple): list of best_coord coordinates at each step
         gameBoards(list of 2d lists): list of game board positions at each move
         winner(int): 1 for maxPlayer is the winner, -1 for minPlayer is the winner, and 0 for tie.
         """
         # YOUR CODE HERE
+        cur_player = True  # true max first, false min first
+        cur_board = self.startBoardIdx
+        self.expandedNodes = 0
         bestMove = []
+        bestValue = []
         gameBoards = []
-        winner = 0
-        return gameBoards, bestMove, winner
+        expandedNodes = []
+
+        while self.checkMovesLeft() and self.checkWinner() == 0:
+            if cur_player:
+                self.currPlayer = True
+                y, x = self.globalIdx[cur_board]
+                best_coord = (-1, -1)
+                best_value = -inf
+                for j in range(3):
+                    for i in range(3):
+                        if self.board[y+j][x+i] == '_':
+                            self.board[y+j][x+i] = self.maxPlayer
+                            cur_board = self.getNextBoardIdx(y+j, x+i)
+                            cur_value = self.minimax(1, cur_board, not cur_player)
+                            self.board[y+j][x+i] = '_'
+                            if cur_value > best_value:
+                                best_coord = (y+j, x+i)
+                                best_value = cur_value
+                self.board[best_coord[0]][best_coord[1]] = self.maxPlayer
+                cur_board = self.getNextBoardIdx(best_coord[0], best_coord[1])
+                bestMove.append(best_coord)
+                bestValue.append(best_value)
+                gameBoards.append(self.board)
+                expandedNodes.append(self.expandedNodes)
+                self.printGameBoard()
+                cur_player = not cur_player
+            else:
+                self.currPlayer = False
+                y, x = self.globalIdx[cur_board]
+
+                print("put in board:", self.startBoardIdx)
+                x = input('x:')
+                y = input('y:')
+                put_y = self.globalIdx[self.startBoardIdx][0] + int(y)
+                put_x = self.globalIdx[self.startBoardIdx][1] + int(x)
+                self.board[put_y][put_x] = self.maxPlayer
+                self.startBoardIdx = self.getNextBoardIdx(put_x, put_y)
+
+                self.board[put_y][put_x] = self.minPlayer
+                cur_board = self.getNextBoardIdx(put_y, put_x)
+                gameBoards.append(self.board)
+                self.printGameBoard()
+                cur_player = not cur_player
+
+        winner = self.checkWinner()
+        return gameBoards, bestMove, expandedNodes, bestValue, winner
 
 
 if __name__ == "__main__":
     uttt = ultimateTicTacToe()
 
     start = time.time()
-    gameBoards, bestMove, expandedNodes, bestValue, winner = uttt.playGamePredifinedAgent(
-        True, False, False)
-    print(time.time() - start)
+    gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGamePredifinedAgent(True, True, True)
+    print(expandedNodes)
+    print(best_value)
+
+    # gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGameYourAgent()
+
+    # gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGameHuman()
+
+    print("time spent: ", time.time() - start)
 
     if winner == 1:
         print("The winner is maxPlayer!!!")
