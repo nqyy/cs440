@@ -663,6 +663,8 @@ class ultimateTicTacToe:
         bestValue = []
         gameBoards = []
         expandedNodes = []
+        alpha = -inf
+        beta = inf
 
         while self.checkMovesLeft() and self.checkWinner() == 0:
             if cur_player:
@@ -675,7 +677,7 @@ class ultimateTicTacToe:
                         if self.board[y+j][x+i] == '_':
                             self.board[y+j][x+i] = self.maxPlayer
                             cur_board = self.getNextBoardIdx(y+j, x+i)
-                            cur_value = self.minimax(1, cur_board, not cur_player)
+                            cur_value = self.minimax(1, cur_board, alpha, beta, not cur_player)
                             self.board[y+j][x+i] = '_'
                             if cur_value > best_value:
                                 best_coord = (y+j, x+i)
@@ -743,7 +745,7 @@ class ultimateTicTacToe:
                         if self.board[y+j][x+i] == '_':
                             self.board[y+j][x+i] = self.maxPlayer
                             cur_board = self.getNextBoardIdx(y+j, x+i)
-                            cur_value = self.minimax(1, cur_board, not cur_player)
+                            cur_value = self.my_minimax(1, cur_board, not cur_player)
                             self.board[y+j][x+i] = '_'
                             if cur_value > best_value:
                                 best_coord = (y+j, x+i)
@@ -760,13 +762,13 @@ class ultimateTicTacToe:
                 self.currPlayer = False
                 y, x = self.globalIdx[cur_board]
 
-                print("put in board:", self.startBoardIdx)
+                print("put in board:", cur_board)
                 x = input('x:')
                 y = input('y:')
-                put_y = self.globalIdx[self.startBoardIdx][0] + int(y)
-                put_x = self.globalIdx[self.startBoardIdx][1] + int(x)
+                put_y = self.globalIdx[cur_board][0] + int(y)
+                put_x = self.globalIdx[cur_board][1] + int(x)
                 self.board[put_y][put_x] = self.maxPlayer
-                self.startBoardIdx = self.getNextBoardIdx(put_x, put_y)
+                cur_board = self.getNextBoardIdx(put_x, put_y)
 
                 self.board[put_y][put_x] = self.minPlayer
                 cur_board = self.getNextBoardIdx(put_y, put_x)
@@ -782,13 +784,13 @@ if __name__ == "__main__":
     uttt = ultimateTicTacToe()
 
     start = time.time()
-    gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGamePredifinedAgent(True, True, True)
-    print(expandedNodes)
-    print(best_value)
+    # gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGamePredifinedAgent(True, True, True)
+    # print(expandedNodes)
+    # print(best_value)
 
     # gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGameYourAgent()
 
-    # gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGameHuman()
+    gameBoards, best_coord, expandedNodes, best_value, winner = uttt.playGameHuman()
 
     print("time spent: ", time.time() - start)
 
