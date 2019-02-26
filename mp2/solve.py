@@ -1,76 +1,37 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import instances
-
-pent_dict = {"F": instances.petnominos[0],
-             "I": instances.petnominos[1],
-             "L": instances.petnominos[2],
-             "N": instances.petnominos[3],
-             "P": instances.petnominos[4],
-             "T": instances.petnominos[5],
-             "U": instances.petnominos[6],
-             "V": instances.petnominos[7],
-             "W": instances.petnominos[8],
-             "X": instances.petnominos[9],
-             "Y": instances.petnominos[10],
-             "Z": instances.petnominos[11]}
-
-counter_dict = {"F": 0,
-                "I": 1,
-                "L": 2,
-                "N": 3,
-                "P": 4,
-                "T": 5,
-                "U": 6,
-                "V": 7,
-                "W": 8,
-                "X": 9,
-                "Y": 10,
-                "Z": 11}
 
 
-def all_transformation_list(letter):
+def all_transformation_list(pent):
     ret = []
-    cur_block = np.copy(pent_dict[letter])
-    if letter == "F" or letter == "L" or letter == "N" or letter == "P" or letter == "Y":
-        # 8 ways
-        for _ in range(4):
-            cur_block = np.rot90(cur_block)
-            ret.append(cur_block)
-        cur_block = np.flip(cur_block, 0)
-        for _ in range(4):
-            cur_block = np.rot90(cur_block)
-            ret.append(cur_block)
-    elif letter == "T" or letter == "U" or letter == "V" or letter == "W":
-        # 4 rotations
-        for _ in range(4):
-            cur_block = np.rot90(cur_block)
-            ret.append(cur_block)
-    elif letter == "Z":
-        # 2 rotation & 2 mirror
-        ret.append(cur_block)
+    cur_block = np.copy(pent)
+    for _ in range(4):
         cur_block = np.rot90(cur_block)
         ret.append(cur_block)
-        cur_block = np.flip(cur_block, 0)
-        ret.append(cur_block)
+    cur_block = np.flip(cur_block, 0)
+    for _ in range(4):
         cur_block = np.rot90(cur_block)
         ret.append(cur_block)
-    elif letter == "I":
-        # 2 rotation
-        ret.append(cur_block)
-        cur_block = np.rot90(cur_block)
-        ret.append(cur_block)
-    elif letter == "X":
-        # just itself
-        ret.append(cur_block)
-    return ret
+
+    # get rid of duplication
+    no_dup = []
+    for item in ret:
+        dup_flag = False
+        for no_dup_item in no_dup:
+            if np.array_equal(no_dup_item, item):
+                dup_flag = True
+                break
+        if not dup_flag:
+            no_dup.append(item)
+
+    return no_dup
 
 
-def all_positions(board, letter):
+def all_positions(board, pent):
     """ Find all positions to place the pentominoes. """
     ret = []
     info = []
-    for cur in all_transformation_list(letter):
+    for cur in all_transformation_list(pent):
         rows, cols = cur.shape
         for i in range(board.shape[0] - rows + 1):
             for j in range(board.shape[1] - cols + 1):
@@ -152,12 +113,12 @@ def solve(board, pents):
 
     matrix = []
     info_matrix = []
-    for key, _ in pent_dict.items():
-        all_pos_list, all_pos_info = all_positions(board, key)
+    for i in range(len(pents)):
+        all_pos_list, all_pos_info = all_positions(board, pents[i])
         for item in all_pos_list:
             item = np.append(np.zeros(12), item)
             item = np.delete(item, list_to_delete)
-            item[counter_dict[key]] = 1
+            item[i] = 1
             matrix.append(item)
         info_matrix.extend(all_pos_info)
 
