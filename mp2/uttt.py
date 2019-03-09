@@ -677,7 +677,7 @@ class ultimateTicTacToe:
                         if self.board[y+j][x+i] == '_':
                             self.board[y+j][x+i] = self.maxPlayer
                             cur_board = self.getNextBoardIdx(y+j, x+i)
-                            cur_value = self.minimax(1, cur_board, alpha, beta, not cur_player)
+                            cur_value = self.alphabeta(1, cur_board, alpha, beta, not cur_player)
                             self.board[y+j][x+i] = '_'
                             if cur_value > best_value:
                                 best_coord = (y+j, x+i)

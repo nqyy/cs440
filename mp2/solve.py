@@ -109,14 +109,14 @@ def solve(board, pents):
     # print(board)
     flat_board = board.ravel()
     list_to_delete = np.where(flat_board == 1)
-    list_to_delete = [x + 12 for x in list_to_delete]
+    list_to_delete = [x + len(pents) for x in list_to_delete]
 
     matrix = []
     info_matrix = []
     for i in range(len(pents)):
         all_pos_list, all_pos_info = all_positions(board, pents[i])
         for item in all_pos_list:
-            item = np.append(np.zeros(12), item)
+            item = np.append(np.zeros(len(pents)), item)
             item = np.delete(item, list_to_delete)
             item[i] = 1
             matrix.append(item)
