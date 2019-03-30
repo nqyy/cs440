@@ -13,22 +13,29 @@ class MultiClassPerceptron(object):
 			0 corresponds to class 0.  
 
 		Args:
-		    num_class(int): number of classes to classify
-		    feature_dim(int): feature dimension for each example 
+			num_class(int): number of classes to classify
+			feature_dim(int): feature dimension for each example 
 		"""
 
-		self.w = np.zeros((feature_dim+1,num_class))
+		self.w = np.zeros((feature_dim + 1, num_class)) # 784 * 10
 
 	def train(self,train_set,train_label):
 		""" Train perceptron model (self.w) with training dataset. 
 
 		Args:
-		    train_set(numpy.ndarray): training examples with a dimension of (# of examples, feature_dim)
-		    train_label(numpy.ndarray): training labels with a dimension of (# of examples, )
+			train_set(numpy.ndarray): training examples with a dimension of (# of examples, feature_dim)
+			train_label(numpy.ndarray): training labels with a dimension of (# of examples, )
 		"""
-
-		# YOUR CODE HERE
-		pass
+		iteration = 30
+		bias = np.hstack((train_set, np.ones((len(train_set), 1))))
+		for _ in range(iteration):
+			for j in range(len(bias)):
+				f =  bias[j]
+				predicted_result = np.argmax(np.dot(self.w.transpose(), f))
+				if predicted_result != train_label[j]:
+					learning_rate = 1 / (j+1)
+					self.w[:,train_label[j]] += learning_rate * f
+					self.w[:,predicted_result] -= learning_rate * f
 
 	def test(self,test_set,test_label):
 		""" Test the trained perceptron model (self.w) using testing dataset. 
@@ -36,8 +43,8 @@ class MultiClassPerceptron(object):
 			by comparing between predicted label and true label. 
 			
 		Args:
-		    test_set(numpy.ndarray): testing examples with a dimension of (# of examples, feature_dim)
-		    test_label(numpy.ndarray): testing labels with a dimension of (# of examples, )
+			test_set(numpy.ndarray): testing examples with a dimension of (# of examples, feature_dim)
+			test_label(numpy.ndarray): testing labels with a dimension of (# of examples, )
 
 		Returns:
 			accuracy(float): average accuracy value 
@@ -45,11 +52,10 @@ class MultiClassPerceptron(object):
 		"""    
 
 		# YOUR CODE HERE
-		accuracy = 0 
-		pred_label = np.zeros((len(test_set)))
-
-		pass
-		
+		bias = np.hstack((test_set, np.ones((len(test_set), 1))))
+		pred_label = np.argmax(np.matmul(bias, self.w), axis=1)
+		accuracy = (len(test_set) - np.count_nonzero(pred_label - test_label)) / len(test_set)
+		print("perceptron accuracy:", accuracy)
 		return accuracy, pred_label
 
 	def save_model(self, weight_file):

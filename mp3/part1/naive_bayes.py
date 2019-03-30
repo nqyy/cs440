@@ -73,7 +73,6 @@ class NaiveBayes(object):
 
 		# YOUR CODE HERE
 		# likelihood: 784 * 256 * 10
-		accuracy = 0
 		pred_label = np.zeros((len(test_set)))
 
 		for i in range(len(test_set)): # for each test
@@ -85,6 +84,7 @@ class NaiveBayes(object):
 			pred_label[i] = np.argmax(posterior_probability)
 
 		accuracy = (len(test_set) - np.count_nonzero(pred_label - test_label)) / len(test_set)
+		print("naive bayes accuracy:", accuracy)
 		return accuracy, pred_label
 
 
