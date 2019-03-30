@@ -80,9 +80,8 @@ class NaiveBayes(object):
 			posterior_probability = np.zeros((self.num_class)) # 10
 			for j in range(self.num_class): # 10
 				posterior_probability[j] = self.prior[j]
-				# TODO need optimization, too slow
-				for k in range(self.feature_dim): # 784
-					posterior_probability[j] += self.likelihood[k, test_set[i][k], j]
+				selected_list = self.likelihood[np.arange(self.feature_dim), test_set[i], j]
+				posterior_probability[j] += np.sum(selected_list)
 			pred_label[i] = np.argmax(posterior_probability)
 
 		accuracy = (len(test_set) - np.count_nonzero(pred_label - test_label)) / len(test_set)
