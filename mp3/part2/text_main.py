@@ -11,6 +11,7 @@ import csv
 from TextClassifier import TextClassifier
 import string
 
+
 """
 This file contains the main application that is run for this part of the MP.
 No need to modify this file
@@ -22,7 +23,7 @@ def read_stop_words(filename):
        Returns a set of stop words
     """
     stop_words=set()
-    with open(filename) as csv_file:
+    with open(filename,'r',encoding="utf-8") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
 
         for row in csv_reader:
@@ -38,7 +39,7 @@ def readFile(filename,stop_words):
     the text in each file and the corresponding labels
     """
     translator = str.maketrans("", "", string.punctuation)
-    with open(filename) as csv_file:
+    with open(filename,'r',encoding="utf-8") as csv_file:
         labels = []
         data = []
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     x_train, y_train, x_test, y_test = load_dataset()
     MNB = TextClassifier()
     MNB.fit(x_train, y_train)
-
+    
     accuracy,pred = MNB.predict(x_test, y_test)
     compute_results(y_test,pred)
 

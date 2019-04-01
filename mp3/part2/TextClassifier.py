@@ -7,6 +7,9 @@
 #
 # Created by Dhruv Agarwal (dhruva2@illinois.edu) on 02/21/2019
 
+import math
+import re
+
 """
 You should only modify code within this file -- the unrevised staff files will be used for all other
 files and classes when code is run, so be careful to not modify anything else.
@@ -18,7 +21,20 @@ class TextClassifier(object):
         :param lambda_mixture - (Extra Credit) This param controls the proportion of contribution of Bigram
         and Unigram model in the mixture model. Hard Code the value you find to be most suitable for your model
         """
+        self.messages = {}
+        self.log_prior = {}
+        self.word_count = {}
+        self.v = set()
+        self.class_word_count={}
         self.lambda_mixture = 0.0
+
+    def count_words(self,words):
+        w_c = {}
+        for word in words:
+            if word not in w_c:
+                w_c[word] = 0.0
+            w_c[word] += 1.0
+        return w_c
 
     def fit(self, train_set, train_label):
         """
@@ -29,10 +45,34 @@ class TextClassifier(object):
         :param train_labels - List of labels corresponding with train_set
             example: Suppose I had two texts, first one was class 0 and second one was class 1.
             Then train_labels := [0,1]
-        """
+        """        
+        set_len = len(train_set)
+        for label in train_label:
+            if label not in self.messages:
+                self.messages[label] = 0.0
+            self.messages[label] += 1.0
+
+        for key in self.messages.keys():
+            self.log_prior[key] = math.log(self.messages[key]/set_len)
+            self.word_count[key] = {}
+            self.class_word_count[key] = 0.0
+        
+        zip_text_label = zip(train_set,train_label)
+        labels = list(self.messages.keys())
+        for text,label in zip_text_label:
+            count = self.count_words(text)
+            for x,y in count.items():
+                if x not in self.v:
+                    self.v.add(x)
+                if x not in self.word_count[label]:
+                    self.word_count[label][x] = 0.0
+                    
+                self.word_count[label][x] += y
+                self.class_word_count[label] += y
+                
 
         # TODO: Write your code here
-        pass
+        
 
     def predict(self, x_set, dev_label,lambda_mix=0.0):
         """
@@ -45,12 +85,37 @@ class TextClassifier(object):
                 accuracy(float): average accuracy value for dev dataset
                 result (list) : predicted class for each text
         """
-
+        
         accuracy = 0.0
         result = []
+        accurate_labels = 0
+        labels = list(self.messages.keys())
+        label_count = len(labels)
+        for x,y in zip(x_set,dev_label):
+            class_score = [0] * label_count
+            count = self.count_words(x)
+            for word,wc in count.items():
+                if word not in self.v:
+                    continue
+                for i in range(label_count):
+                    cur_label = labels[i]
+                    total_words = self.class_word_count[cur_label]
+                    log_i_temp = math.log((self.word_count[cur_label].get(word,0.0)+1)/(total_words+ len(self.v)))
+                    class_score[i] += log_i_temp
+            
+            for i in range(label_count):
+                class_score[i] += self.log_prior[labels[i]]
+            
+            class_index = class_score.index(max(class_score))
+            pre_label = labels[class_index]
+            #print(class_score," and predicted label is ",pre_label," and the correct label is ",y)
+            
+            if pre_label == y:
+                accurate_labels +=1.0
 
+            result.append(pre_label)
+        accuracy = accurate_labels / len(x_set)    
         # TODO: Write your code here
-        pass
 
         return accuracy,result
 
