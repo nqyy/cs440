@@ -26,14 +26,14 @@ class MultiClassPerceptron(object):
 			train_set(numpy.ndarray): training examples with a dimension of (# of examples, feature_dim)
 			train_label(numpy.ndarray): training labels with a dimension of (# of examples, )
 		"""
-		iteration = 30
+		epochs = 30
 		bias = np.hstack((train_set, np.ones((len(train_set), 1))))
-		for _ in range(iteration):
+		for _ in range(epochs):
 			for j in range(len(bias)):
 				f =  bias[j]
 				predicted_result = np.argmax(np.dot(self.w.transpose(), f))
 				if predicted_result != train_label[j]:
-					learning_rate = 1 / (j+1)
+					learning_rate = 1
 					self.w[:,train_label[j]] += learning_rate * f
 					self.w[:,predicted_result] -= learning_rate * f
 
@@ -55,6 +55,18 @@ class MultiClassPerceptron(object):
 		bias = np.hstack((test_set, np.ones((len(test_set), 1))))
 		pred_label = np.argmax(np.matmul(bias, self.w), axis=1)
 		accuracy = (len(test_set) - np.count_nonzero(pred_label - test_label)) / len(test_set)
+
+		# # for 1.2 report
+		# tmp = np.matmul(bias, self.w)
+		# group = [np.nonzero(test_label == i)[0] for i in range(self.w.shape[1])]
+		# self.highest = np.zeros((self.w.shape[0]-1, self.w.shape[1]))
+		# self.lowest = np.zeros((self.w.shape[0]-1, self.w.shape[1]))
+		# for class_id, indices in enumerate(group):
+		# 	max_idx = np.argmax(tmp[indices, class_id])
+		# 	min_idx = np.argmin(tmp[indices, class_id])
+		# 	self.highest[:,class_id] = (test_set[indices])[max_idx]
+		# 	self.lowest[:,class_id] = (test_set[indices])[min_idx]
+		
 		print("perceptron accuracy:", accuracy)
 		return accuracy, pred_label
 

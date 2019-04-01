@@ -109,7 +109,10 @@ if __name__ == '__main__':
                       title='Confusion matrix, with normalization')
     plt.show()
 
-    
+    # # for 1.1 report
+    # plot_visualization(NB.highest, class_names, "Greys")
+    # plot_visualization(NB.lowest, class_names, "Greys")
+
     # Initialize perceptron model. 
     perceptron = MultiClassPerceptron(num_class,feature_dim)
     # Train model.
@@ -122,3 +125,7 @@ if __name__ == '__main__':
     plot_confusion_matrix(y_test, y_pred, classes=class_names, normalize=True,
                       title='Confusion matrix, with normalization')
     plt.show()    
+
+    # # for 1.2 report
+    # plot_visualization(perceptron.highest, class_names, "Greys")
+    # plot_visualization(perceptron.lowest, class_names, "Greys")

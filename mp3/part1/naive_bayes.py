@@ -74,14 +74,23 @@ class NaiveBayes(object):
 		# YOUR CODE HERE
 		# likelihood: 784 * 256 * 10
 		pred_label = np.zeros((len(test_set)))
-
+		posterior_probability_matrix = np.ndarray((len(test_set), self.num_class))
 		for i in range(len(test_set)): # for each test
-			posterior_probability = np.zeros((self.num_class)) # 10
 			for j in range(self.num_class): # 10
-				posterior_probability[j] = self.prior[j]
+				posterior_probability_matrix[i][j] = self.prior[j]
 				selected_list = self.likelihood[np.arange(self.feature_dim), test_set[i], j]
-				posterior_probability[j] += np.sum(selected_list)
-			pred_label[i] = np.argmax(posterior_probability)
+				posterior_probability_matrix[i][j] += np.sum(selected_list)
+			pred_label[i] = np.argmax(posterior_probability_matrix[i])
+
+		# # for 1.1 report
+		# group = [np.nonzero(test_label == i)[0] for i in range(self.num_class)]
+		# self.highest = np.zeros((self.feature_dim, self.num_class))
+		# self.lowest = np.zeros((self.feature_dim, self.num_class))
+		# for class_id, indices in enumerate(group):
+		# 	max_idx = np.argmax(posterior_probability_matrix[indices, class_id])
+		# 	min_idx = np.argmin(posterior_probability_matrix[indices, class_id])
+		# 	self.highest[:,class_id] = (test_set[indices])[max_idx]
+		# 	self.lowest[:,class_id] = (test_set[indices])[min_idx]
 
 		accuracy = (len(test_set) - np.count_nonzero(pred_label - test_label)) / len(test_set)
 		print("naive bayes accuracy:", accuracy)
