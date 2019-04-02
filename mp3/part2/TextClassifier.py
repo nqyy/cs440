@@ -115,52 +115,52 @@ class TextClassifier(object):
                 accurate_labels +=1.0
 
             result.append(pre_label)
-        accuracy = accurate_labels / len(x_set)    
+        accuracy = accurate_labels / len(dev_label)    
         # TODO: Write your code here
 
         return accuracy,result
 
-    def calculate_confusion_matrix(self,dev_set,dev_label):
-        dev_messages = {}
-        labels = list(self.messages.keys())
-        label_count = len(labels)
-        self.confusion_matrix = [[]] * label_count
-        for x in range(label_count):
-            self.confusion_matrix[x] = [0] * label_count
-            dev_messages[x] = 0.0
+    # def calculate_confusion_matrix(self,dev_set,dev_label):
+    #     dev_messages = {}
+    #     labels = list(self.messages.keys())
+    #     label_count = len(labels)
+    #     self.confusion_matrix = [[]] * label_count
+    #     for x in range(label_count):
+    #         self.confusion_matrix[x] = [0] * label_count
+    #         dev_messages[x] = 0.0
 
-        for x,y in zip(dev_set,dev_label):
-            class_score = [0] * label_count
-            count = self.count_words(x)
-            for word,wc in count.items():
-                if word not in self.v:
-                    continue
-                for i in range(label_count):
-                    cur_label = labels[i]
-                    total_words = self.class_word_count[cur_label]
-                    log_i_temp = math.log((self.word_count[cur_label].get(word,0.0)+1)/(total_words+ len(self.v)))
-                    class_score[i] += log_i_temp
+    #     for x,y in zip(dev_set,dev_label):
+    #         class_score = [0] * label_count
+    #         count = self.count_words(x)
+    #         for word,wc in count.items():
+    #             if word not in self.v:
+    #                 continue
+    #             for i in range(label_count):
+    #                 cur_label = labels[i]
+    #                 total_words = self.class_word_count[cur_label]
+    #                 log_i_temp = math.log((self.word_count[cur_label].get(word,0.0)+1)/(total_words+ len(self.v)))
+    #                 class_score[i] += log_i_temp
             
-            for i in range(label_count):
-                class_score[i] += self.log_prior[labels[i]]
+    #         for i in range(label_count):
+    #             class_score[i] += self.log_prior[labels[i]]
             
-            class_index = class_score.index(max(class_score))
-            pre_label = labels[class_index]
-            exact_label = y
-            self.confusion_matrix[exact_label-1][pre_label-1] += 1.0
+    #         class_index = class_score.index(max(class_score))
+    #         pre_label = labels[class_index]
+    #         exact_label = y
+    #         self.confusion_matrix[exact_label-1][pre_label-1] += 1.0
 
-        for i in range(label_count):
-            total_messages = sum(self.confusion_matrix[i])
-            self.confusion_matrix[i] = [x/total_messages for x in self.confusion_matrix[i] ]
+    #     for i in range(label_count):
+    #         total_messages = sum(self.confusion_matrix[i])
+    #         self.confusion_matrix[i] = [x/total_messages for x in self.confusion_matrix[i] ]
 
-        return self.confusion_matrix
+    #     return self.confusion_matrix
         
 
-    def top_twenty_feature_words_all(self):
-        x = len(self.class_word_count)
-        for i in range(x):
-            top_twenty_i = nlargest(20, self.word_count[i+1], key=self.word_count[i+1].get)
-            print("Top twenty words from Class ",i+1," : ",top_twenty_i)
+    # def top_twenty_feature_words_all(self):
+    #     x = len(self.class_word_count)
+    #     for i in range(x):
+    #         top_twenty_i = nlargest(20, self.word_count[i+1], key=self.word_count[i+1].get)
+    #         print("Top twenty words from Class ",i+1," : ",top_twenty_i)
         
     
             

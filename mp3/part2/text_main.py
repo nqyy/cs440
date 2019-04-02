@@ -104,5 +104,6 @@ if __name__ == '__main__':
 
     #print("Confusion matrix: ",MNB.calculate_confusion_matrix(x_test,y_test))
     
+    
 
     #MNB.top_twenty_feature_words_all()
