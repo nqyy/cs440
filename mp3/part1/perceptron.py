@@ -26,7 +26,7 @@ class MultiClassPerceptron(object):
 			train_set(numpy.ndarray): training examples with a dimension of (# of examples, feature_dim)
 			train_label(numpy.ndarray): training labels with a dimension of (# of examples, )
 		"""
-		epochs = 30
+		epochs = 1
 		bias = np.hstack((train_set, np.ones((len(train_set), 1))))
 		for _ in range(epochs):
 			for j in range(len(bias)):
