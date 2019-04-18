@@ -22,8 +22,9 @@ import numpy as np
         (Stdout print will not affect autograder as long as runtime is within limits)
 """
 def minibatch_gd(epoch, w1, w2, w3, w4, b1, b2, b3, b4, x_train, y_train, num_classes, shuffle=True):
-
-    #IMPLEMENT HERE
+    # w1: 764*256, w2: 256*256, w3: 256*256, w4: 256*10
+    # b1: 256, b2: 256, b3: 256, b4: 10
+    # x_train: 50000 * 784, y_train: 50000 (label)
 
     return w1, w2, w3, w4, b1, b2, b3, b4, losses
 
@@ -68,16 +69,37 @@ def four_nn():
         This is a great time to review on your linear algebra as well.
 """
 def affine_forward(A, W, b):
+    Z = np.matmul(np.column_stack((A, np.ones(len(A)))), np.vstack((W, b)))
+    cache = (A, W, b)
     return Z, cache
 
 def affine_backward(dZ, cache):
-    return dA, dW, dB
+    A, W, b = cache
+    dA = np.matmul(dZ, W.T)
+    dW = np.matmul(A.T, dZ)
+    db = np.sum(dZ, axis=0)
+    return dA, dW, db
 
 def relu_forward(Z):
+    A = Z.copy()
+    A[A < 0] = 0
+    cache = Z
     return A, cache
 
 def relu_backward(dA, cache):
+    Z = cache
+    dA = np.where(Z > 0, dA, 0)
     return dA
 
 def cross_entropy(F, y):
+    n = len(F)
+    Fiyi = F[np.arange(n), y.astype(int)]
+    log_stuff = np.log(np.sum(np.exp(F), axis=1))
+    loss = (-1 / n) * np.sum(Fiyi - log_stuff)
+
+    first_item = np.zeros(F.shape)
+    first_item[np.arange(n), y.astype(int)] = 1
+    second_item = np.exp(F) / np.sum(np.exp(F), axis=1).reshape((-1, 1))
+    dF = (-1 / n) * (first_item - second_item)
+
     return loss, dF

@@ -135,10 +135,10 @@ class TestNeuralNetwork(unittest.TestCase):
 
     def test_minibatch_gradient(self):
         np.random.seed(seed=57)
-        w1, b1 = init_weights(5, 64)
-        w2, b2 = init_weights(64, 64)
-        w3, b3 = init_weights(64, 64)
-        w4, b4 = init_weights(64, 3)
+        w1, b1 = self.init_weights(5, 64)
+        w2, b2 = self.init_weights(64, 64)
+        w3, b3 = self.init_weights(64, 64)
+        w4, b4 = self.init_weights(64, 3)
 
         with open('tests/expert_policy.txt', 'r') as f:
             data = []
