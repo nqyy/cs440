@@ -25,7 +25,25 @@ def minibatch_gd(epoch, w1, w2, w3, w4, b1, b2, b3, b4, x_train, y_train, num_cl
     # w1: 764*256, w2: 256*256, w3: 256*256, w4: 256*10
     # b1: 256, b2: 256, b3: 256, b4: 10
     # x_train: 50000 * 784, y_train: 50000 (label)
-
+    N = len(x_train) # data size
+    n = 200 # batch size
+    losses = [None] * epoch
+    for e in range(epoch):
+        loss = 0
+        x_all = x_train.copy()
+        y_all = y_train.copy()
+        if shuffle:
+            indices = np.random.choice(N, N, replace=False)
+            x_all = x_train[indices]
+            y_all = y_train[indices]
+        for i in range(int(N/n)):
+            X = x_all[i*n:i*n+n]
+            y = y_all[i*n:i*n+n]
+            loss += four_nn(w1, w2, w3, w4, b1, b2, b3, b4, X, y, num_classes, False)
+        losses[e] = loss
+        print("epoch: ", e)
+        print("loss: ", loss)
+    
     return w1, w2, w3, w4, b1, b2, b3, b4, losses
 
 """
@@ -45,9 +63,13 @@ def minibatch_gd(epoch, w1, w2, w3, w4, b1, b2, b3, b4, x_train, y_train, num_cl
         The confusion matrix won't be autograded but necessary in report.
 """
 def test_nn(w1, w2, w3, w4, b1, b2, b3, b4, x_test, y_test, num_classes):
-
-    avg_class_rate = 0.0
+    classifications = four_nn(w1, w2, w3, w4, b1, b2, b3, b4, x_test, y_test, num_classes, test=True)
+    avg_class_rate = np.sum(classifications == y_test) / len(x_test)
     class_rate_per_class = [0.0] * num_classes
+    for i in range(num_classes):
+        class_i = np.argwhere(y_test == i)
+        class_rate_per_class[i] = np.sum(classifications[class_i] == i) / len(class_i)
+
     return avg_class_rate, class_rate_per_class
 
 """
@@ -56,9 +78,38 @@ def test_nn(w1, w2, w3, w4, b1, b2, b3, b4, x_test, y_test, num_classes):
     Up to you on how to implement this, won't be unit tested
     Should call helper functions below
 """
-def four_nn():
-    pass
+def four_nn(w1, w2, w3, w4, b1, b2, b3, b4, x_test, y_test, num_classes, test):
+    z1, acache1 = affine_forward(x_test, w1, b1)
+    a1, rcache1 = relu_forward(z1)
+    z2, acache2 = affine_forward(a1, w2, b2)
+    a2, rcache2 = relu_forward(z2)
+    z3, acache3 = affine_forward(a2, w2, b2)
+    a3, rcache3 = relu_forward(z3)
+    F, acache4 = affine_forward(a3, w4, b4)
 
+    if test == True:
+        classifications = np.argmax(F, axis=1)
+        return classifications
+
+    loss, dF = cross_entropy(F, y_test)
+    dA3, dW4, db4 = affine_backward(dF, acache4)
+    dZ3 = relu_backward(dA3, rcache3)
+    dA2, dW3, db3 = affine_backward(dZ3, acache3)
+    dZ2 = relu_backward(dA2, rcache2)
+    dA1, dW2, db2 = affine_backward(dZ2, acache2)
+    dZ1 = relu_backward(dA1, rcache1)
+    dX, dW1, db1 = affine_backward(dZ1, acache1)
+    
+    w1 -= 0.1 * dW1
+    w2 -= 0.1 * dW2
+    w3 -= 0.1 * dW3
+    w4 -= 0.1 * dW4
+    b1 -= 0.1 * db1
+    b2 -= 0.1 * db2
+    b3 -= 0.1 * db3
+    b4 -= 0.1 * db4
+
+    return loss
 """
     Next five functions will be used in four_nn() as helper functions.
     All these functions will be autograded, and a unit test script is provided as unit_test.py.
