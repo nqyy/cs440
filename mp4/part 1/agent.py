@@ -1,6 +1,7 @@
 import numpy as np
 import utils
 import random
+import math
 
 
 class Agent:
@@ -47,5 +48,67 @@ class Agent:
         (Note that [adjoining_wall_x=0, adjoining_wall_y=0] is also the case when snake runs out of the 480x480 board)
 
         '''
+        snake_head_x, snake_head_y, snake_body, food_x, food_y = state 
+        snake_head_x = math.floor(snake_head_x/40)
+        snake_head_y = math.floor(snake_head_y/40)
+        snake_body = []
+        for i, j in snake_body:
+            snake_body.append((math.floor(i/40), math.floor(j/40)))
+        food_x = math.floor(food_x/40)
+        food_y = math.floor(food_y/40)
+
+
+        adjoining_wall = [0, 0]
+        if snake_head_x == 1:
+            adjoining_wall[0] = 1
+        elif snake_head_x == 12:
+            adjoining_wall[0] = 2
+        else:
+            adjoining_wall[0] = 0
+
+        if snake_head_y == 1:
+            adjoining_wall[1] = 1
+        elif snake_head_y == 12:
+            adjoining_wall[1] = 2
+        else:
+            adjoining_wall[1] = 0
+
+        food_dir = [0, 0]
+        if (food_x - snake_head_x) > 0:
+            food_dir[0] = 2
+        elif (food_x - snake_head_x) < 0:
+            food_dir[0] = 1
+        else:
+            food_dir[0] = 0
+
+        if (food_y - snake_head_y) > 0:
+            food_dir[1] = 2
+        elif (food_y - snake_head_y) < 0:
+            food_dir[1] = 1
+        else:
+            food_dir[1] = 0
+            
+        adjoining_body = []
+        if ((snake_head_x, snake_head_y+1) in snake_body):
+            ret = 1
+        else:
+            ret = 0
+        adjoining_body.append(ret)
+        if ((snake_head_x, snake_head_y-1) in snake_body):
+            ret = 1
+        else:
+            ret = 0
+        adjoining_body.append(ret)
+        if ((snake_head_x-1, snake_head_y) in snake_body):
+            ret = 1
+        else:
+            ret = 0
+        adjoining_body.append(ret)
+        if ((snake_head_x+1, snake_head_y) in snake_body):
+            ret = 1
+        else:
+            ret = 0
+        adjoining_body.append(ret)
+
 
         return self.actions[0]
