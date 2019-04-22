@@ -39,9 +39,9 @@ class Agent:
         snake_head_x, snake_head_y, snake_body, food_x, food_y = state 
         snake_head_x = math.floor(snake_head_x/40)
         snake_head_y = math.floor(snake_head_y/40)
-        snake_body = []
+        tmp = []
         for i, j in snake_body:
-            snake_body.append((math.floor(i/40), math.floor(j/40)))
+            tmp.append((math.floor(i/40), math.floor(j/40)))
         food_x = math.floor(food_x/40)
         food_y = math.floor(food_y/40)
 
@@ -77,22 +77,22 @@ class Agent:
             food_dir[1] = 0
                 
         adjoining_body = []
-        if ((snake_head_x, snake_head_y-1) in snake_body):
+        if ((snake_head_x, snake_head_y-1) in tmp):
             ret = 1
         else:
             ret = 0
         adjoining_body.append(ret)
-        if ((snake_head_x, snake_head_y+1) in snake_body):
+        if ((snake_head_x, snake_head_y+1) in tmp):
             ret = 1
         else:
             ret = 0
         adjoining_body.append(ret)
-        if ((snake_head_x-1, snake_head_y) in snake_body):
+        if ((snake_head_x-1, snake_head_y) in tmp):
             ret = 1
         else:
             ret = 0
         adjoining_body.append(ret)
-        if ((snake_head_x+1, snake_head_y) in snake_body):
+        if ((snake_head_x+1, snake_head_y) in tmp):
             ret = 1
         else:
             ret = 0
@@ -132,8 +132,10 @@ class Agent:
         Tips: you need to discretize the state to the state space defined on the webpage first.
         (Note that [adjoining_wall_x=0, adjoining_wall_y=0] is also the case when snake runs out of the 480x480 board)
         '''   
-        curr_state = self.updateState(state)
+        tmp = state.copy()
+        tmp[2] = state[2].copy()
 
+        curr_state = self.updateState(state)
         if dead:
             last_move_state = self.updateState(self.s)
             self.Q[last_move_state[0]][last_move_state[1]][last_move_state[2]][last_move_state[3]][last_move_state[4]][last_move_state[5]][last_move_state[6]][last_move_state[7]][self.a] = self.updateQtable(self.s, self.a, state, dead, points)
@@ -145,6 +147,8 @@ class Agent:
             new_q = self.updateQtable(self.s, self.a, state, dead, points)
             self.Q[last_move_state[0]][last_move_state[1]][last_move_state[2]][last_move_state[3]][last_move_state[4]][last_move_state[5]][last_move_state[6]][last_move_state[7]][self.a] = new_q
 
+
+        # it should return the last one if there is a tie of argmax
         utility = [0,0,0,0]
         for i in range(4):
             N_val = self.N[curr_state[0]][curr_state[1]][curr_state[2]][curr_state[3]][curr_state[4]][curr_state[5]][curr_state[6]][curr_state[7]][i]
@@ -153,11 +157,22 @@ class Agent:
                 utility[i] = 1
             else:
                 utility[i] = Q_val
+        #action = np.argmax(utility)
         action = np.argmax(utility)
+        max_action = max(utility)
+        for i in range(len(utility)-1,-1,-1):
+            if utility[i] == max_action:
+                action = i
+                break
+        # utility_ar = np.array(utility)
+        # max_list = np.where(utility_ar == utility_ar.max())
+        # action = max_list[0][-1]
 
         self.N[curr_state[0]][curr_state[1]][curr_state[2]][curr_state[3]][curr_state[4]][curr_state[5]][curr_state[6]][curr_state[7]][action] += 1
-
-        self.s = state
+        #discretized state should be passed
+        # deep copy
+        self.s = tmp
+        self.s[2] = tmp[2].copy()
         self.a = action
         self.points = points
         return action

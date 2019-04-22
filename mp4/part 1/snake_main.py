@@ -141,8 +141,8 @@ def main():
     parser.add_argument('--model_name', dest="model_name", type=str, default="q_agent.npy",
                         help='name of model to save if training or to load if evaluating - default q_agent')
 
-    parser.add_argument('--train_episodes', dest="train_eps", type=int, default=10000,
-                        help='number of training episodes - default 10000')
+    parser.add_argument('--train_episodes', dest="train_eps", type=int, default=30000,
+                        help='number of training episodes - default 30000')
 
     parser.add_argument('--test_episodes', dest="test_eps", type=int, default=1000,
                         help='number of testing episodes - default 1000')
