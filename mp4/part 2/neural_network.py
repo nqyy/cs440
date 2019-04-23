@@ -198,7 +198,7 @@ def four_nn(w1, w2, w3, w4, b1, b2, b3, b4, x_test, y_test, num_classes, test):
 
 
 def affine_forward(A, W, b):
-    Z = np.matmul(np.column_stack((A, np.ones(len(A)))), np.vstack((W, b)))
+    Z = np.matmul(A, W) + b
     cache = (A, W)
     return Z, cache
 
@@ -214,13 +214,11 @@ def affine_backward(dZ, cache):
 def relu_forward(Z):
     A = Z.copy()
     A[A < 0] = 0
-    cache = Z
-    return A, cache
+    return A, Z
 
 
 def relu_backward(dA, cache):
-    Z = cache
-    dA = np.where(Z > 0, dA, 0)
+    dA[np.where(cache < 0)] = 0.0
     return dA
 
 
